@@ -2,11 +2,11 @@ const { Router } = require("express");
 
 const router = Router();
 
-const mailgunService = require("../services/mailgunService");
+const mailjetService = require("../services/mailjetService");
 
-router.post("/send-mailgun", async (req, res) => {
+router.post("/send-mailjet", async (req, res) => {
   try {
-    const response = await mailgunService.sendMail(req, res);
+    const response = await mailjetService.sendMail(req, res);
     res.status(200).json({
       status: "success",
       message: "Email sent successfully",
