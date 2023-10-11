@@ -20,7 +20,6 @@ app.get("/", (req, res) => {
 app.post("/api", async (req, res, next) => {
   try {
     const { name, subject, message, from, to, toName } = req.body;
-    console.log(name, subject, message, from, to, toName);
     const request = await mailjet.post("send", { version: "v3.1" }).request({
       Messages: [
         {
@@ -39,7 +38,6 @@ app.post("/api", async (req, res, next) => {
         },
       ],
     });
-    console.log(request.response.status);
     res.send({
       status: request.response.status,
       data: request.response.statusText
