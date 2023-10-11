@@ -1,24 +1,57 @@
 require("dotenv").config();
 const express = require("express");
-const mailgunController = require("./controllers/mailgunController");
-const mailTrapController = require("./controllers/mailtrapController");
-const mailjetController = require("./controllers/mailjetController");
-
-const bodyParser = require("body-parser");
 
 const app = express();
 
 const port = process.env.PORT;
 
-app.use(bodyParser.json());
+const Mailjet = require('node-mailjet');
+const mailjet = Mailjet.apiConnect(
+  process.env.MAILJET_API_KEY,
+  process.env.MAILJET_SECRET_KEY
+);
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.use("/api", mailgunController);
-app.use("/api", mailTrapController);
-app.use("/api", mailjetController);
+app.post("/api", async (req, res, next) => {
+  try {
+    const { name, subject, message, from, to, toName } = req.body;
+    console.log(name, subject, message, from, to, toName);
+    const request = await mailjet.post("send", { version: "v3.1" }).request({
+      Messages: [
+        {
+          From: {
+            Email: from,
+            Name: name,
+          },
+          To: [
+            {
+              Email: to,
+              Name: toName,
+            },
+          ],
+          Subject: subject,
+          TextPart: message,
+        },
+      ],
+    });
+    console.log(request.response.status);
+    res.send({
+      status: request.response.status,
+      data: request.response.statusText
+    })
+  } catch (e) {
+    console.log(e.message);
+    res.send({
+      status: 400,
+      error: e.message,
+    });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on PORT ${port}`);
