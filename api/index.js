@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
@@ -11,6 +12,7 @@ const mailjet = Mailjet.apiConnect(
   process.env.MAILJET_SECRET_KEY
 );
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
