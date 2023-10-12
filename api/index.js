@@ -42,13 +42,13 @@ app.post("/api", async (req, res, next) => {
     });
     res.send({
       status: request.response.status,
-      data: request.response.statusText
+      statusText: request.response.statusText
     })
   } catch (e) {
     console.log(e.message);
     res.send({
       status: 400,
-      error: e.message,
+      statusText: e.message,
     });
   }
 });
